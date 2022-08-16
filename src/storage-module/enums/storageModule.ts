@@ -1,0 +1,4 @@
+export enum STORAGE_MODULE {
+  CV_TEMPLATES = "CV_TEMPLATES",
+  USER_CV = "USER_CV",
+}
