@@ -3,7 +3,6 @@
 # Pre-requisites
 
 - Install [Node.js](https://nodejs.org/en/) version 16.15.0 LTS
-- Install [Redis](https://phoenixnap.com/kb/install-redis-on-ubuntu-20-04)
 
 # Getting started
 
