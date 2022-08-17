@@ -1,5 +1,5 @@
 import { inject, injectable } from "inversify";
-import { ICvTemplateRepo } from "../ports/ICvTemplateRepo";
+import { ICvTemplatesRepo } from "../ports/ICvTemplateRepo";
 import cvHelper from "./cvHelper";
 import "reflect-metadata";
 import { DI_TYPES } from "../../../shared/types/di";
@@ -17,7 +17,7 @@ import { ICvUserSavedRepo } from "../ports/ICvUserSavedRepo";
 @injectable()
 export class CvCoreService implements ICvCoreService {
   constructor(
-    @inject(DI_TYPES.CvTemplateRepo) private cvTemplateRepo: ICvTemplateRepo,
+    @inject(DI_TYPES.CvTemplateRepo) private cvTemplateRepo: ICvTemplatesRepo,
     @inject(DI_TYPES.CvUserInfoRepo) private cvUserInfoRepo: ICvUserInfoRepo,
     @inject(DI_TYPES.CvUserSavedRepo)
     private cvUserSavedRepo: ICvUserSavedRepo,
@@ -26,7 +26,7 @@ export class CvCoreService implements ICvCoreService {
   ) {}
 
   async getAllTemplates(params: paginationType) {
-    const templates = await this.cvTemplateRepo.findWithPagination(params);
+    const templates = await this.cvTemplateRepo.getAllTemplates(params);
 
     const urls = [];
 
@@ -37,7 +37,7 @@ export class CvCoreService implements ICvCoreService {
         await this.signedUrlService.download({
           bucket: BUCKET,
           module: STORAGE_MODULE.CV_TEMPLATES,
-          referenceId: template.id,
+          referenceId: template.id.toString(),
           filesName: [template.fileName],
         })
       );
@@ -49,12 +49,8 @@ export class CvCoreService implements ICvCoreService {
   async getMyTemplate(params: { userId: number; cvTemplateId: number }) {
     //User ID FROM THE TOKEN
     const userId = params.userId;
-    const cvTemplateId = params.cvTemplateId;
 
-    const template = await this.cvUserSavedRepo.findOne({
-      condition: { userId, cvTemplateId },
-      attributes: ["fileName"],
-    });
+    const template = await this.cvUserSavedRepo.getMyTemplateFileName(params);
 
     cvHelper.validateExistTemplate(template);
 
@@ -77,15 +73,13 @@ export class CvCoreService implements ICvCoreService {
     const userId = params.userId;
     const cvTemplateId = params.cvTemplateId;
 
-    const template = await this.cvTemplateRepo.findOne({
-      condition: { id: cvTemplateId },
-    });
+    const template = await this.cvTemplateRepo.getTemplateFileName(
+      cvTemplateId
+    );
 
     cvHelper.validateExistTemplate(template);
 
-    const cvUserInfo = await this.cvUserInfoRepo.findOne({
-      condition: { userId },
-    });
+    const cvUserInfo = await this.cvUserInfoRepo.getById(userId);
 
     cvHelper.validateExistCvUserInfo(cvUserInfo);
 
@@ -93,7 +87,7 @@ export class CvCoreService implements ICvCoreService {
     const s3File = await this.signedUrlService.download({
       bucket: BUCKET,
       module: STORAGE_MODULE.CV_TEMPLATES,
-      referenceId: template.id,
+      referenceId: cvTemplateId.toString(),
       filesName: [template.fileName],
     });
 

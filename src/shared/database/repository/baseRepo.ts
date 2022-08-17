@@ -1,5 +1,5 @@
 import { injectable, unmanaged } from "inversify";
-import { Model, ModelStatic, Optional } from "sequelize";
+import { Model, ModelStatic } from "sequelize";
 import { IBaseRepo } from "../../interfaces/IBaseRepo";
 import "reflect-metadata";
 
@@ -11,7 +11,7 @@ export abstract class BaseRepo implements IBaseRepo {
     this.collectionInstance = collectionInstance;
   }
 
-  async create(params: Optional<any, string>) {
+  async create(params: any) {
     const newRecord: any = await this.collectionInstance.create(params);
     return newRecord.dataValues;
   }
@@ -20,14 +20,14 @@ export abstract class BaseRepo implements IBaseRepo {
     return await this.collectionInstance.bulkCreate(params);
   }
 
-  async upsert(params: Optional<any, string>) {
+  async upsert(params: any) {
     const updatedData = params.update;
     const updates: any = await this.collectionInstance.upsert(updatedData);
 
     return updates.dataValues;
   }
 
-  async update(params: Optional<any, string>) {
+  async update(params: any) {
     const condition = params.condition;
     const updatedData = params.update;
 
@@ -36,7 +36,7 @@ export abstract class BaseRepo implements IBaseRepo {
     });
   }
 
-  async findOne(params: Optional<any, string>): Promise<any> {
+  async findOne(params: any): Promise<any> {
     const condition = params.condition;
     const attributes = params?.attributes;
     const include = params?.include;
@@ -52,7 +52,7 @@ export abstract class BaseRepo implements IBaseRepo {
     });
   }
 
-  async findWithPagination(params: Optional<any, string>) {
+  async findWithPagination(params: any): Promise<any> {
     const condition = params?.condition;
     const attributes = params?.attributes;
     const limit = params.limit || 10;
@@ -72,7 +72,7 @@ export abstract class BaseRepo implements IBaseRepo {
     });
   }
 
-  async find(params: Optional<any, string>): Promise<any> {
+  async find(params: any): Promise<any> {
     const condition = params?.condition;
     const attributes = params?.attributes;
     const include = params?.include;
@@ -90,7 +90,7 @@ export abstract class BaseRepo implements IBaseRepo {
     });
   }
 
-  async delete(params: Optional<any, string>) {
+  async delete(params: any) {
     const condition = params.condition;
 
     return await this.collectionInstance.destroy({

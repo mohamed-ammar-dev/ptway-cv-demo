@@ -3,14 +3,14 @@ import { DI_TYPES } from "../shared/types/di";
 import { CvTemplatesRepo } from "../cv-module/adapters/database/repository/cvTemplatesRepo";
 import { CvCoreService } from "../cv-module/domain/core/cvCoreService";
 import { ICvCoreService } from "../cv-module/interfaces/ICvCoreService";
-import { ICvTemplateRepo } from "../cv-module/domain/ports/ICvTemplateRepo";
+import { ICvTemplatesRepo } from "../cv-module/domain/ports/ICvTemplateRepo";
 
 const diContainer = new Container();
 
 diContainer.bind<ICvCoreService>(DI_TYPES.CvCoreService).to(CvCoreService);
 
 diContainer
-  .bind<ICvTemplateRepo>(DI_TYPES.CvTemplateRepo)
+  .bind<ICvTemplatesRepo>(DI_TYPES.CvTemplateRepo)
   .to(CvTemplatesRepo)
   .inSingletonScope();
 
